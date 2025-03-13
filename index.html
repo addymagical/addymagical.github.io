@@ -31,6 +31,24 @@
             padding: 5px;
             border-bottom: 1px solid #ddd;
         }
+        .download-section {
+            margin-top: 30px;
+            text-align: center;
+            width: 300px;
+        }
+        .download-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .download-btn:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
@@ -39,6 +57,26 @@
         <input name="file" type="file" multiple onchange="handleFileUpload(event)">
     </form>
     <div class="file-list" id="fileList"></div>
+    
+    <div class="download-section">
+        <h3>Download Sample Files</h3>
+        <button class="download-btn" onclick="downloadSampleFile('image1.jpeg')">Download Sample 1</button>
+        <button class="download-btn" onclick="downloadSampleFile('image2.jpeg')">Download Sample 2</button>
+        <button class="download-btn" onclick="downloadSampleFile('image3.jpeg')">Download Sample 3</button>
+    </div>
+
+    <div class="form-section">
+        <h3>Form</h3>
+        <form action="/form" method="post" enctype="multipart/form-data">
+            <label for="text1">Field 1</label><br>
+            <input id="text1" name="text1" type="text"><br>
+            <label for="text2">Field 2</label><br>
+            <input id="text2" name="text2" type="text"><br>
+            <label for="text3">Field 3</label><br>
+            <input id="text3" name="text3" type="text"><br>
+        </form>
+    </div>
+    
     <script>
         function handleFileUpload(event) {
             const fileList = document.getElementById('fileList');
@@ -49,6 +87,21 @@
                 listItem.textContent = `${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
                 fileList.querySelector('ul').appendChild(listItem);
             });
+        }
+        
+        function downloadSampleFile(filename) {
+            // Create a link to the file in your repository
+            const fileUrl = `./${filename}`;
+            
+            // Create a temporary anchor element
+            const downloadLink = document.createElement('a');
+            downloadLink.href = fileUrl;
+            downloadLink.download = filename;
+            
+            // Append to the body, click it, and remove it
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
         }
     </script>
 </body>
