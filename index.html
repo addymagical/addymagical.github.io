@@ -49,20 +49,54 @@
         .download-btn:hover {
             background-color: #45a049;
         }
+        /* Added styles for image previews */
+        .image-previews {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 800px;
+        }
+        .image-preview {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
-    <p>Upload one or more files for testing</p>
-    <form action="/upload" method="post" enctype="multipart/form-data">
+    <h3>Upload one or more files for testing</h3>
+    <form action="/upload" method="post" enctype="multipart/form-data" id="uploadForm">
         <input name="file" type="file" multiple onchange="handleFileUpload(event)">
+        <button type="button" class="submit-btn" onclick="displayImagePreviews()">Submit</button>
     </form>
     <div class="file-list" id="fileList"></div>
     
+    <!-- Added container for image previews -->
+    <div class="image-previews" id="imagePreviews"></div>
+    
     <div class="download-section" style="padding: 20px;">
         <h3>Download Sample Files</h3>
-        <a class="download-btn" href="./image1.jpeg" download="image1.jpeg">Download Sample 1</a><br><br><br>
-        <a class="download-btn" href="./image2.jpeg" download="image2.jpeg">Download Sample 2</a><br><br><br>
-        <a class="download-btn" href="./image3.jpeg" download="image3.jpeg">Download Sample 3</a>
+        <a class="download-btn" href="./image1.jpeg" download="image1.jpeg" type="image/jpeg">Download Sample 1</a><br><br><br>
+        <a class="download-btn" href="./image2.jpeg" download="image2.jpeg" type="image/jpeg">Download Sample 2</a><br><br><br>
+        <a class="download-btn" href="./image3.jpeg" download="image3.jpeg" type="image/jpeg">Download Sample 3</a>
     </div>
 
     <div class="form-section">
@@ -78,31 +112,49 @@
     </div>
     
     <script>
+        let uploadedFiles = [];
+        
         function handleFileUpload(event) {
             const fileList = document.getElementById('fileList');
             fileList.innerHTML = '<h3>Uploaded Files:</h3><ul>';
             
-            Array.from(event.target.files).forEach(file => {
+            uploadedFiles = Array.from(event.target.files);
+            
+            uploadedFiles.forEach(file => {
                 const listItem = document.createElement('li');
                 listItem.textContent = `${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
                 fileList.querySelector('ul').appendChild(listItem);
             });
         }
         
-        function downloadSampleFile(filename) {
-            // Create a link to the file in your repository
-            const fileUrl = `./${filename}`;
+        function displayImagePreviews() {
+            const previewContainer = document.getElementById('imagePreviews');
+            previewContainer.innerHTML = '';
             
-            // Create a temporary anchor element
-            const downloadLink = document.createElement('a');
-            downloadLink.href = fileUrl;
-            downloadLink.download = filename;
-            
-            // Append to the body, click it, and remove it
-            document.body.appendChild(downloadLink);
-            downloadLink.click();
-            document.body.removeChild(downloadLink);
+            uploadedFiles.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'image-preview';
+                        img.title = file.name;
+                        previewContainer.appendChild(img);
+                    }
+                    
+                    reader.readAsDataURL(file);
+                }
+            });
         }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const imagesToPreload = ['./image1.jpeg', './image2.jpeg', './image3.jpeg'];
+            imagesToPreload.forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
+        });
     </script>
 </body>
 </html>
