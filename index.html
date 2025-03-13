@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi File Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+        .upload-box {
+            width: 300px;
+            padding: 20px;
+            border: 2px dashed #ccc;
+            text-align: center;
+            cursor: pointer;
+        }
+        .file-list {
+            margin-top: 20px;
+            width: 300px;
+        }
+        .file-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .file-list li {
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <p>Upload one or more files for testing</p>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input name="file" type="file" multiple onchange="handleFileUpload(event)">
+    </form>
+    <div class="file-list" id="fileList"></div>
+    <script>
+        function handleFileUpload(event) {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '<h3>Uploaded Files:</h3><ul>';
+            
+            Array.from(event.target.files).forEach(file => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+                fileList.querySelector('ul').appendChild(listItem);
+            });
+        }
+    </script>
+</body>
+</html>
