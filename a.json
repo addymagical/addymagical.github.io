@@ -1,0 +1,75 @@
+{
+    "createdAt": "2025-03-13T18:56:34.892Z",
+    "destId": "0e105389-8447-576c-937b-ea23a9eebc26",
+    "id": "1b81ea2e-d5e5-474a-8918-02f407d50d80",
+    "properties": {
+        "attachments": [
+            {
+                "downloadActionId": "bbb71c5b-a4c3-4ac7-a994-4d8379c86d1d"
+            },
+            {
+                "downloadActionId": "c1322c9c-0e6f-49f8-9c99-aa8f76296c07"
+            },
+            {
+                "downloadActionId": "30c1e5e7-e20e-4a76-9bc0-2ec7ac3203f2"
+            }
+        ],
+        "dest": {
+            "createdAt": "2025-03-13T18:56:14.827Z",
+            "creatorUserId": "",
+            "id": "0e105389-8447-576c-937b-ea23a9eebc26",
+            "type": "css",
+            "matchers": [
+                {
+                    "id": "1acca79f-144b-4d24-a3d9-4a28dfe9b4cb",
+                    "createdAt": "2025-03-13T18:56:14.824Z",
+                    "creatorUserId": "",
+                    "updatedAt": "2025-03-13T18:56:14.824Z",
+                    "creationMethod": "name-attribute-csg",
+                    "data": {
+                        "rule": [
+                            "[name=\"file\"]:not([type=\"password\"])"
+                        ]
+                    },
+                    "type": "css",
+                    "destId": "0e105389-8447-576c-937b-ea23a9eebc26",
+                    "sourceId": null
+                },
+                {
+                    "id": "900c5704-a0fa-4992-b533-e316dc663dd7",
+                    "createdAt": "2025-03-13T18:56:14.824Z",
+                    "creatorUserId": "",
+                    "updatedAt": "2025-03-13T18:56:14.824Z",
+                    "creationMethod": "csg",
+                    "data": {
+                        "rule": [
+                            "[multiple]:not([type=\"password\"])"
+                        ]
+                    },
+                    "type": "css",
+                    "destId": "0e105389-8447-576c-937b-ea23a9eebc26",
+                    "sourceId": null
+                },
+                {
+                    "id": "0cbcea1f-b4a8-41ec-887f-08af5113749b",
+                    "createdAt": "2025-03-13T18:56:14.824Z",
+                    "creatorUserId": "",
+                    "updatedAt": "2025-03-13T18:56:14.824Z",
+                    "data": {
+                        "rule": [
+                            "html[lang=\"en\"] > body > form#uploadForm[action=\"\\/upload\"][method=\"post\"][enctype=\"multipart\\/form-data\"] > input[name=\"file\"][type=\"file\"][multiple=\"\"][onchange=\"handleFileUpload\\(event\\)\"]"
+                        ]
+                    },
+                    "type": "css-complete",
+                    "destId": "0e105389-8447-576c-937b-ea23a9eebc26",
+                    "sourceId": null
+                }
+            ],
+            "originalUrl": "https://addymagical.github.io/",
+            "uri": "https://addymagical.github.io/"
+        }
+    },
+    "type": "upload-recent-download",
+    "updatedAt": "2025-03-13T18:56:34.892Z",
+    "version": 1
+}

@@ -1,0 +1,46 @@
+{
+    "createdAt": "2025-03-13T19:08:05.639Z",
+    "destId": "8f817384-e0bb-4f0a-9aae-a1d0fe5fcc99",
+    "id": "e54d99cc-c75e-4f4e-850c-f71d63a7a0b1",
+    "properties": {
+        "attachments": [
+            {
+                "downloadActionId": "63dfccc5-d2b2-4032-b167-f22f0f03637a"
+            },
+            {
+                "downloadActionId": "49c2b46c-0272-4d51-be24-4a1345a7e69e"
+            }
+        ],
+        "dest": {
+            "id": "8f817384-e0bb-4f0a-9aae-a1d0fe5fcc99",
+            "createdAt": "2025-03-13T19:08:05.639Z",
+            "matchers": [
+                {
+                    "id": "c5ceb168-69f0-48bb-892a-e06d2c7897b9",
+                    "createdAt": "2025-03-13T19:08:05.639Z",
+                    "creatorUserId": "",
+                    "updatedAt": "2025-03-13T19:08:05.639Z",
+                    "type": "css",
+                    "data": {
+                        "rule": [
+                            "#uploadForm > input[type=file]"
+                        ]
+                    },
+                    "destId": "8f817384-e0bb-4f0a-9aae-a1d0fe5fcc99",
+                    "sourceId": null,
+                    "creationMethod": "magical-user-generated-css"
+                }
+            ],
+            "type": "css",
+            "label": {
+                "en-US": "hello"
+            },
+            "creatorUserId": "5441dd77-9a4b-4ff9-a5b8-bcc211e6a201",
+            "uri": "https://addymagical.github.io/",
+            "originalUrl": "https://addymagical.github.io/"
+        }
+    },
+    "type": "upload-recent-download",
+    "updatedAt": "2025-03-13T19:08:05.639Z",
+    "version": 1
+}

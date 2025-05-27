@@ -110,6 +110,14 @@
             <input id="text3" name="text3" type="text"><br>
         </form>
     </div>
+
+    <!-- New text input section -->
+    <div class="text-input-section" style="margin-top: 30px; text-align: center;">
+        <h3>Text Input</h3>
+        <input type="text" id="userInput" placeholder="Type something here..." style="padding: 8px; width: 300px; margin-bottom: 10px;">
+        <button onclick="handleTextSubmit()" style="background-color: #4CAF50; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Submit</button>
+        <div id="displayArea" style="margin-top: 20px; width: 300px; margin-left: auto; margin-right: auto;">placeholder site info</div>
+    </div>
     
     <script>
         let uploadedFiles = [];
@@ -146,6 +154,16 @@
                     reader.readAsDataURL(file);
                 }
             });
+        }
+        
+        function handleTextSubmit() {
+            const input = document.getElementById('userInput');
+            const displayArea = document.getElementById('displayArea');
+            
+            if (input.value.trim() !== '') {
+                displayArea.textContent = input.value;
+                input.value = ''; // Clear the input
+            }
         }
         
         document.addEventListener('DOMContentLoaded', function() {
