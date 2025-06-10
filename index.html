@@ -130,7 +130,7 @@
             
             uploadedFiles.forEach(file => {
                 const listItem = document.createElement('li');
-                listItem.textContent = `${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+                listItem.textContent = `${file.name} (${(file.size / 1024).toFixed(2)} KB) - Type: ${file.type || 'unknown'}`;
                 fileList.querySelector('ul').appendChild(listItem);
             });
         }
