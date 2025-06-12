@@ -97,6 +97,8 @@
         <a class="download-btn" href="./image1.jpeg" download="image1.jpeg" type="image/jpeg">Download Sample 1</a><br><br><br>
         <a class="download-btn" href="./image2.jpeg" download="image2.jpeg" type="image/jpeg">Download Sample 2</a><br><br><br>
         <a class="download-btn" href="./image3.jpeg" download="image3.jpeg" type="image/jpeg">Download Sample 3</a>
+        <br><br><br>
+        <button onclick="openPDF()" style="background-color: #4CAF50; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer;">View PDF</button>
     </div>
 
     <div class="form-section">
@@ -164,6 +166,10 @@
                 displayArea.textContent = input.value;
                 input.value = ''; // Clear the input
             }
+        }
+        
+        function openPDF() {
+            window.open('sample.pdf', '_blank', 'width=800,height=600');
         }
         
         document.addEventListener('DOMContentLoaded', function() {
