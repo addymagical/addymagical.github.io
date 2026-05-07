@@ -38,7 +38,7 @@
             border-radius: 4px; 
             cursor: pointer; 
             margin-top: 15px; 
-            display: none; /* Hidden until file is ready */
+            display: none; 
             font-weight: bold;
             width: 100%;
             transition: background 0.2s;
@@ -57,14 +57,11 @@
     </div>
 
     <div class="container">
-        <h3 class="section-title">📊 Data Converter (TSV/CSV to CSV)</h3>
-        <p class="status">Upload a .tsv or .csv file. Conversion happens instantly, then click download.</p>
+        <h3 class="section-title">📊 Data Converter (Simple TSV to CSV)</h3>
+        <p class="status">Using your preferred conversion logic. Swaps tabs for commas instantly.</p>
         <input type="file" id="dataInput" onchange="handleDataUpload(event)" accept=".csv,.tsv,.txt">
-        
         <div id="dataStatus" class="status"></div>
-        
-        <button id="downloadBtn" class="btn-download" onclick="downloadCSV()">Download Converted CSV</button>
-        
+        <button id="downloadBtn" class="btn-download" onclick="downloadCSV()">Download CSV</button>
         <a id="downloadAnchor" style="display:none"></a>
     </div>
 
@@ -117,10 +114,9 @@
             const statusDiv = document.getElementById('dataStatus');
             const downloadBtn = document.getElementById('downloadBtn');
 
-            // Reset state for new upload
             downloadBtn.style.display = "none";
             if (convertedBlobUrl) URL.revokeObjectURL(convertedBlobUrl);
-            statusDiv.textContent = "Processing file...";
+            statusDiv.textContent = "Reading file...";
             
             outputFileName = file.name.replace(/\.[^/.]+$/, "") + "_converted.csv";
 
@@ -137,25 +133,20 @@
                 const commaCount = (firstLine.match(/,/g) || []).length;
                 const tabCount = (firstLine.match(/\t/g) || []).length;
 
-                let csvContent = "";
+                let processedContent = "";
 
                 if (tabCount > commaCount) {
-                    statusDiv.textContent = "TSV detected and converted. Click below to download.";
-                    csvContent = lines.map(line => {
-                        return line.split('\t').map(cell => {
-                            // Escape commas in cells by wrapping in quotes
-                            return cell.includes(',') ? `"${cell}"` : cell;
-                        }).join(',');
-                    }).join('\n');
+                    statusDiv.textContent = "TSV detected. Converting using your logic...";
+                    // YOUR LOGIC: Split by tab and join by comma
+                    processedContent = lines.map(line => line.split('\t').join(',')).join('\n');
                 } else {
                     statusDiv.textContent = "CSV detected. Ready for download.";
-                    csvContent = rawContent;
+                    processedContent = rawContent;
                 }
 
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const blob = new Blob([processedContent], { type: 'text/csv;charset=utf-8;' });
                 convertedBlobUrl = URL.createObjectURL(blob);
                 
-                // Show the button, but DO NOT trigger the click automatically
                 downloadBtn.style.display = "block";
             };
 
