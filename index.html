@@ -29,21 +29,21 @@
         .image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; margin: 15px 0; }
         .image-preview { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; }
         
-        /* CSV Section Styles */
-        #csvOutput {
-            width: 100%;
-            height: 200px;
-            margin-top: 15px;
-            font-family: monospace;
-            font-size: 12px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            background: #fafafa;
-        }
         .status { font-size: 12px; color: #666; margin-top: 5px; }
-        .btn-copy { background: #2196F3; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-top: 5px; }
+        .btn-download { 
+            background: #4CAF50; 
+            color: white; 
+            border: none; 
+            padding: 12px 20px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            margin-top: 15px; 
+            display: none; /* Hidden until file is ready */
+            font-weight: bold;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        .btn-download:hover { background: #45a049; }
     </style>
 </head>
 <body>
@@ -58,12 +58,14 @@
 
     <div class="container">
         <h3 class="section-title">📊 Data Converter (TSV/CSV to CSV)</h3>
-        <p class="status">Upload any .csv or .tsv. It will auto-detect tabs vs commas.</p>
+        <p class="status">Upload a .tsv or .csv file. Conversion happens instantly, then click download.</p>
         <input type="file" id="dataInput" onchange="handleDataUpload(event)" accept=".csv,.tsv,.txt">
         
         <div id="dataStatus" class="status"></div>
-        <textarea id="csvOutput" placeholder="CSV output will appear here..."></textarea>
-        <button class="btn-copy" onclick="copyToClipboard()">Copy to Clipboard</button>
+        
+        <button id="downloadBtn" class="btn-download" onclick="downloadCSV()">Download Converted CSV</button>
+        
+        <a id="downloadAnchor" style="display:none"></a>
     </div>
 
     <script>
@@ -104,53 +106,68 @@
         }
 
         // --- DATA CONVERTER LOGIC ---
+        let convertedBlobUrl = null;
+        let outputFileName = "converted_data.csv";
+
         function handleDataUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
             const statusDiv = document.getElementById('dataStatus');
-            const outputArea = document.getElementById('csvOutput');
+            const downloadBtn = document.getElementById('downloadBtn');
 
-            statusDiv.textContent = "Reading file...";
+            // Reset state for new upload
+            downloadBtn.style.display = "none";
+            if (convertedBlobUrl) URL.revokeObjectURL(convertedBlobUrl);
+            statusDiv.textContent = "Processing file...";
+            
+            outputFileName = file.name.replace(/\.[^/.]+$/, "") + "_converted.csv";
 
             reader.onload = function(e) {
                 const rawContent = e.target.result;
                 const lines = rawContent.split(/\r?\n/);
                 
-                if (lines.length === 0) {
+                if (lines.length === 0 || (lines.length === 1 && lines[0] === "")) {
                     statusDiv.textContent = "File is empty.";
                     return;
                 }
 
-                // Smarter detection: Check the first line for tabs vs commas
                 const firstLine = lines[0];
                 const commaCount = (firstLine.match(/,/g) || []).length;
                 const tabCount = (firstLine.match(/\t/g) || []).length;
 
-                let processedContent = "";
+                let csvContent = "";
 
                 if (tabCount > commaCount) {
-                    statusDiv.textContent = "Detected Tab-Separated Values (TSV). Converting to CSV...";
-                    // Replace tabs with commas. Note: This is a simple replacer. 
-                    // Professional parsers handle quotes, but this works for standard data.
-                    processedContent = lines.map(line => line.split('\t').join(',')).join('\n');
+                    statusDiv.textContent = "TSV detected and converted. Click below to download.";
+                    csvContent = lines.map(line => {
+                        return line.split('\t').map(cell => {
+                            // Escape commas in cells by wrapping in quotes
+                            return cell.includes(',') ? `"${cell}"` : cell;
+                        }).join(',');
+                    }).join('\n');
                 } else {
-                    statusDiv.textContent = "Detected Comma-Separated Values (CSV). Outputting text...";
-                    processedContent = rawContent;
+                    statusDiv.textContent = "CSV detected. Ready for download.";
+                    csvContent = rawContent;
                 }
 
-                outputArea.value = processedContent;
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                convertedBlobUrl = URL.createObjectURL(blob);
+                
+                // Show the button, but DO NOT trigger the click automatically
+                downloadBtn.style.display = "block";
             };
 
             reader.readAsText(file);
         }
 
-        function copyToClipboard() {
-            const copyText = document.getElementById("csvOutput");
-            copyText.select();
-            document.execCommand("copy");
-            alert("Copied to clipboard!");
+        function downloadCSV() {
+            if (!convertedBlobUrl) return;
+            const link = document.getElementById('downloadAnchor');
+            link.href = convertedBlobUrl;
+            link.download = outputFileName;
+            link.click();
         }
     </script>
 </body>
