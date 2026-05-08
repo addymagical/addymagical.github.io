@@ -57,8 +57,8 @@
     </div>
 
     <div class="container">
-        <h3 class="section-title">📊 Data Converter (Simple TSV to CSV)</h3>
-        <p class="status">Using your preferred conversion logic. Swaps tabs for commas instantly.</p>
+        <h3 class="section-title">📊 Robust Data Converter</h3>
+        <p class="status">Supports multi-line descriptions and complex keyword quotes.</p>
         <input type="file" id="dataInput" onchange="handleDataUpload(event)" accept=".csv,.tsv,.txt">
         <div id="dataStatus" class="status"></div>
         <button id="downloadBtn" class="btn-download" onclick="downloadCSV()">Download CSV</button>
@@ -115,46 +115,89 @@
             const downloadBtn = document.getElementById('downloadBtn');
 
             downloadBtn.style.display = "none";
-            if (convertedBlobUrl) URL.revokeObjectURL(convertedBlobUrl);
-            statusDiv.textContent = "Reading file...";
-            
+            statusDiv.textContent = "Processing... (This may take a moment for large files)";
             outputFileName = file.name.replace(/\.[^/.]+$/, "") + "_converted.csv";
 
             reader.onload = function(e) {
-                const rawContent = e.target.result;
-                const lines = rawContent.split(/\r?\n/);
+                const text = e.target.result;
                 
-                if (lines.length === 0 || (lines.length === 1 && lines[0] === "")) {
-                    statusDiv.textContent = "File is empty.";
+                // 1. Detect if it's actually a TSV
+                const firstLine = text.split('\n')[0];
+                const isTSV = (firstLine.match(/\t/g) || []).length > (firstLine.match(/,/g) || []).length;
+
+                if (!isTSV) {
+                    statusDiv.textContent = "CSV detected. No conversion needed.";
+                    setupDownload(text);
                     return;
                 }
 
-                const firstLine = lines[0];
-                const commaCount = (firstLine.match(/,/g) || []).length;
-                const tabCount = (firstLine.match(/\t/g) || []).length;
+                // 2. Robust TSV Parsing (Handles newlines inside quotes)
+                const rows = [];
+                let currentRow = [];
+                let currentField = '';
+                let inQuotes = false;
 
-                let processedContent = "";
+                for (let i = 0; i < text.length; i++) {
+                    const char = text[i];
+                    const next = text[i+1];
 
-                if (tabCount > commaCount) {
-                    statusDiv.textContent = "TSV detected. Converting using your logic...";
-                    // YOUR LOGIC: Split by tab and join by comma
-                    processedContent = lines.map(line => line.split('\t').join(',')).join('\n');
-                } else {
-                    statusDiv.textContent = "CSV detected. Ready for download.";
-                    processedContent = rawContent;
+                    if (inQuotes) {
+                        if (char === '"' && next === '"') {
+                            currentField += '"'; i++; // Handle escaped quotes
+                        } else if (char === '"') {
+                            inQuotes = false;
+                        } else {
+                            currentField += char;
+                        }
+                    } else {
+                        if (char === '"' && currentField === '') {
+                            inQuotes = true;
+                        } else if (char === '\t') {
+                            currentRow.push(currentField);
+                            currentField = '';
+                        } else if (char === '\n' || char === '\r') {
+                            currentRow.push(currentField);
+                            rows.push(currentRow);
+                            currentRow = [];
+                            currentField = '';
+                            if (char === '\r' && next === '\n') i++; // Skip \n in \r\n
+                        } else {
+                            currentField += char;
+                        }
+                    }
+                }
+                if (currentRow.length > 0 || currentField !== '') {
+                    currentRow.push(currentField);
+                    rows.push(currentRow);
                 }
 
-                const blob = new Blob([processedContent], { type: 'text/csv;charset=utf-8;' });
-                convertedBlobUrl = URL.createObjectURL(blob);
-                
-                downloadBtn.style.display = "block";
+                // 3. Clean CSV Serialization
+                const csvContent = rows.map(row => {
+                    return row.map(field => {
+                        let f = field.trim();
+                        // Only wrap in quotes if the field contains a comma, a quote, or a newline
+                        if (f.includes(',') || f.includes('"') || f.includes('\n') || f.includes('\r')) {
+                            return `"${f.replace(/"/g, '""')}"`;
+                        }
+                        return f;
+                    }).join(',');
+                }).join('\n');
+
+                statusDiv.textContent = `Conversion complete! Processed ${rows.length} rows.`;
+                setupDownload(csvContent);
             };
 
             reader.readAsText(file);
         }
 
+        function setupDownload(content) {
+            if (convertedBlobUrl) URL.revokeObjectURL(convertedBlobUrl);
+            const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+            convertedBlobUrl = URL.createObjectURL(blob);
+            document.getElementById('downloadBtn').style.display = "block";
+        }
+
         function downloadCSV() {
-            if (!convertedBlobUrl) return;
             const link = document.getElementById('downloadAnchor');
             link.href = convertedBlobUrl;
             link.download = outputFileName;
